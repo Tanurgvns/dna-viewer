@@ -8,21 +8,25 @@ import plotly.graph_objects as go
 import streamlit as st
 
 import dna_utils as du
+from helix_view import helix_html
 
 BASE_COLOURS = {
-    "A": "#2E9E5B",  # green
-    "T": "#D2453C",  # red
-    "G": "#E0A21B",  # amber
-    "C": "#2F6FD0",  # blue
-    "N": "#9AA0A6",  # grey
+    "A": "#3DDC84",  # green
+    "T": "#4FC3F7",  # blue
+    "G": "#FFCA28",  # yellow
+    "C": "#B388FF",  # purple
+    "N": "#9E9E9E",  # grey
 }
 MAX_DISPLAY = 6000  # bases shown at once in the coloured view
+MAX_HELIX = 1_000_000  # bases sent to the helix view
 
 st.set_page_config(page_title="DNA Viewer", page_icon="🧬", layout="wide")
 
 st.markdown(
     """
     <style>
+    .stApp {background: #000;}
+    .block-container {padding-top: 3.5rem;}
     .seq-block {font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
                 font-size: 14px; line-height: 1.7; overflow-x: auto;
                 white-space: pre; padding: 0.75rem 1rem; border-radius: 6px;
@@ -87,12 +91,15 @@ with st.sidebar:
     source = st.radio("Sequence source", ["Example", "Upload FASTA", "Paste sequence"])
 
     text = ""
+    file_name = "Pasted sequence"
     if source == "Example":
         text = example_fasta()
+        file_name = "example.fasta"
     elif source == "Upload FASTA":
         uploaded = st.file_uploader("FASTA file", type=["fa", "fasta", "fna", "ffn", "txt"])
         if uploaded:
             text = uploaded.getvalue().decode("utf-8", errors="replace")
+            file_name = uploaded.name
     else:
         text = st.text_area("Paste FASTA or raw sequence", height=200,
                             placeholder=">my_seq\nATGCGTACGTTAG...")
@@ -115,7 +122,17 @@ with st.sidebar:
 record = records[idx]
 seq = record.sequence
 
-st.title("🧬 DNA Viewer")
+helix_seq = seq[:MAX_HELIX]
+if len(seq) > MAX_HELIX:
+    st.caption(f"The helix view shows the first {MAX_HELIX:,} bases.")
+page = helix_html(helix_seq, file_name)
+if hasattr(st, "iframe"):
+    st.iframe(page, height=820)
+else:  # older Streamlit versions
+    import streamlit.components.v1 as components
+    components.html(page, height=820, scrolling=True)
+
+st.subheader("More analysis")
 st.caption(record.header)
 
 tab_overview, tab_seq, tab_gc, tab_orf, tab_trans, tab_motif = st.tabs(
