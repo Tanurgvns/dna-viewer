@@ -2,9 +2,7 @@
 
 A small Streamlit app that turns FASTA files and raw DNA sequences into something easier to read than endless lines of A, T, G and C.
 
-**Live demo:** _add your Streamlit Cloud link here_
 
-![Screenshot](docs/screenshot.png)
 
 ## Features
 
