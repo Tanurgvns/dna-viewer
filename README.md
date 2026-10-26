@@ -2,10 +2,9 @@
 
 A small Streamlit app that turns FASTA files and raw DNA sequences into something easier to read than endless lines of A, T, G and C.
 
-
-
 ## Features
 
+- **Double-helix view:** a scrolling B-DNA helix with base pairs, hydrogen bonds, sugar-phosphate backbone, minor and major grooves, and turn markers. A reading head scans along the sequence (or click, scroll, or use the arrow keys), with a live sequence window and helix facts for the selected pair.
 - **Input:** upload a FASTA file (multi-record supported), paste a sequence, or try the built-in example. RNA input (U) is converted to T automatically.
 - **Overview:** length, GC content, GC skew, approximate dsDNA weight and base composition charts.
 - **Coloured sequence view:** colour-coded bases with position numbers, forward or reverse-complement strand, optional double-stranded view, and FASTA download.
@@ -39,6 +38,8 @@ pytest
 ```
 dna-viewer/
 ├── app.py              # Streamlit interface
+├── helix_view.html     # Double-helix viewer (HTML/JavaScript)
+├── helix_view.py       # Puts the sequence into the helix viewer
 ├── dna_utils.py        # Sequence analysis (parsing, ORFs, GC, translation, motifs)
 ├── tests/              # Unit tests for dna_utils
 ├── requirements.txt
